@@ -20,15 +20,16 @@ public class PoductService {
          return  product;
      }
 
-    public void saveExelProduct(MultipartFile file){
-        try{
-            List<Product> productList = ProductHelper.excelToDatabase(file.getInputStream());
-            productDao.saveAll(productList);
-        }catch (IOException e){
-            throw new RuntimeException("fail to store excel data" +e.getMessage());
-        }
-    }
-    public List<Product> getAllTutorials(){
-        return productDao.findAll();
-    }
+     public void savePrductFile(MultipartFile file){
+         try {
+             List<Product> productList  = ProductHelper.excelToDatabase(file.getInputStream());
+             productDao.saveAll(productList);
+         } catch (Exception e) {
+             throw new RuntimeException("Fail to store excel file data" + e.getMessage());
+         }
+     }
+
+     public List<Product> getAllProducts(){
+         return  productDao.findAll();
+     }
 }

@@ -81,7 +81,7 @@ public class ProductHelper {
             }
             workbook.close();
             return excelProduct;
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Fail to parse your excel file"+ e.getMessage());
         }
     }

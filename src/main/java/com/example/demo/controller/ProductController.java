@@ -15,12 +15,15 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Date;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/product")
+@Controller
 public class ProductController {
     @Autowired
-    PoductService productService;
     ProductDao productDao;
+    @Autowired
+    PoductService productService;
+
     @PostMapping("/regisProduct")
     public Product registerProducts (@RequestBody Product products){
         products.setExpiDate(new Date());
@@ -64,24 +67,21 @@ public class ProductController {
         return productDao.countProductByName();
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<ResponMessage> uploadExcelfileData(@RequestParam("file") MultipartFile file){
-        String  message = "";
-        if (ProductHelper.hasExcelFormat(file)) {
+    @PostMapping("/UploadProductFile")
+    public ResponseEntity<ResponMessage> uploadProductExcelFile(@RequestParam("file") MultipartFile file){
+        String message = "";
+
+        if (ProductHelper.hasExcelFormat(file)){
             try {
-                productService.saveExelProduct(file);
-                message = "Uploaded the file successfully: " + file.getOriginalFilename();
+                productService.savePrductFile(file);
+                message = "Upload the file sucessfully" + file.getOriginalFilename();
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponMessage(message));
             } catch (Exception e) {
-                message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+                message = "Somthing went wrong" + file.getOriginalFilename() + "!";
                 return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponMessage(message));
             }
         }
-
-        message = "Please upload an excel file!";
+        message = "Please upload an excel file";
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponMessage(message));
-
     }
-
-
 }
