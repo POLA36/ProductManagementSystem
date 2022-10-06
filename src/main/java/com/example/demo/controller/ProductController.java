@@ -1,17 +1,25 @@
 package com.example.demo.controller;
 
 import com.example.demo.dao.ProductDao;
+import com.example.demo.helper.ProductHelper;
+import com.example.demo.message.ResponMessage;
 import com.example.demo.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/product")
+@Controller
 public class ProductController {
     @Autowired
-    private ProductDao productDao;
+    ProductDao productDao;
 
     @PostMapping("/regisProduct")
     public Product registerProducts (@RequestBody Product products){
@@ -56,12 +64,25 @@ public class ProductController {
         return productDao.countProductByName();
     }
 
-    @GetMapping("/getProductLike")
-    public void getProductByNameLike(){
-        List<Product> products = productDao.findByNameLike("product 1");
-        products.forEach((p) -> {
-            System.out.println(p.getId());
-            System.out.println(p.getName());
-        });
+    @PostMapping("/upload")
+    public ResponseEntity<ResponMessage> uploadExcelfileData(@RequestParam("file") MultipartFile file){
+        String  message = "";
+        if (ProductHelper.hasExcelFormat(file)) {
+            try {
+                productDao.saveAll(file);
+
+                message = "Uploaded the file successfully: " + file.getOriginalFilename();
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponMessage(message));
+            } catch (Exception e) {
+                message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponMessage(message));
+            }
+        }
+
+        message = "Please upload an excel file!";
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponMessage(message));
+
     }
+
+
 }

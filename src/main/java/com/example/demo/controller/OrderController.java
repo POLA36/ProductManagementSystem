@@ -4,12 +4,13 @@ import com.example.demo.dao.OrderDao;
 import com.example.demo.models.Order;
 import com.example.demo.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/order")
 public class OrderController {
     @Autowired
