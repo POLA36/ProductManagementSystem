@@ -4,6 +4,7 @@ import com.example.demo.dao.ProductDao;
 import com.example.demo.helper.ProductHelper;
 import com.example.demo.message.ResponMessage;
 import com.example.demo.models.Product;
+import com.example.demo.service.PoductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +15,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Date;
 import java.util.List;
 
-@RestController
-@RequestMapping("/product")
 @Controller
+@RequestMapping("/product")
 public class ProductController {
     @Autowired
+    PoductService productService;
     ProductDao productDao;
-
     @PostMapping("/regisProduct")
     public Product registerProducts (@RequestBody Product products){
         products.setExpiDate(new Date());
@@ -69,8 +69,7 @@ public class ProductController {
         String  message = "";
         if (ProductHelper.hasExcelFormat(file)) {
             try {
-                productDao.saveAll(file);
-
+                productService.saveExelProduct(file);
                 message = "Uploaded the file successfully: " + file.getOriginalFilename();
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponMessage(message));
             } catch (Exception e) {

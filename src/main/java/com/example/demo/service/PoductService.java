@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dao.ProductDao;
 import com.example.demo.helper.ProductHelper;
 import com.example.demo.models.Product;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,19 +12,18 @@ import java.util.List;
 
 @Service
 public class PoductService {
-
-     Product product = new Product();
-     private  ProductDao productDao;
+    @Autowired
+     ProductDao productDao;
 
      public Product saveProduct(Product product){
          productDao.save(product);
          return  product;
      }
 
-    public void saveExcelProduct(MultipartFile file){
+    public void saveExelProduct(MultipartFile file){
         try{
-            List<Product> tutorials = ProductHelper.excelToDatabase(file.getInputStream());
-            productDao.saveAll(tutorials);
+            List<Product> productList = ProductHelper.excelToDatabase(file.getInputStream());
+            productDao.saveAll(productList);
         }catch (IOException e){
             throw new RuntimeException("fail to store excel data" +e.getMessage());
         }
